@@ -207,6 +207,40 @@ button{
   }
 }
 
+@media (max-width: 600px){
+
+  .slot-machine{
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .reel{
+    width: 140px;
+    height: 140px;
+  }
+
+  .item{
+    height: 140px;
+    font-size: 16px;
+  }
+
+  h2{
+    font-size: 20px;
+  }
+
+  button{
+    width: 80%;
+    font-size: 16px;
+  }
+
+  #popupBox{
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+}
+
 </style>
 </head>
 
@@ -265,8 +299,8 @@ button{
 let name="";
 let lastResult={};
 
-const todayKey="bookFateDate";
-const spinKey="bookFateSpins";
+const spinKey = "bookFateSpins";
+const timeKey = "bookFateStartTime";
 
 const genres=["Fantasy","Romance","Thriller","Mystery","Sci-Fi","Horror"];
 const pages=["100+ pages","200+ pages","300+ pages","400+ pages","500+ pages"];
@@ -277,12 +311,23 @@ function getToday(){
 }
 
 function checkReset(){
-  const saved=localStorage.getItem(todayKey);
-  const today=getToday();
 
-  if(saved!==today){
-    localStorage.setItem(todayKey,today);
-    localStorage.setItem(spinKey,"0");
+  const start = localStorage.getItem(timeKey);
+  const now = Date.now();
+
+  // first time ever playing
+  if(!start){
+    localStorage.setItem(timeKey, now);
+    localStorage.setItem(spinKey, "0");
+    return;
+  }
+
+  const elapsed = now - parseInt(start);
+
+  // 24 hours = 86400000 ms
+  if(elapsed >= 86400000){
+    localStorage.setItem(timeKey, now);
+    localStorage.setItem(spinKey, "0");
   }
 }
 
@@ -304,9 +349,9 @@ function spin(){
   let spins=parseInt(localStorage.getItem(spinKey)||"0");
 
   if(spins>=3){
-    alert("3 spins used today. Come back tomorrow 📖");
-    return;
-  }
+  alert("3 spins used. Come back after 24 hours 📖");
+  return;
+}
 
   spins++;
   localStorage.setItem(spinKey,spins);
