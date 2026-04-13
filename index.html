@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Fate Machine</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Georgia, serif;
+  text-align:center;
+  color:#2b1b2e;
+  overflow:hidden;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 182, 193, 0.35), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(173, 216, 230, 0.35), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(221, 160, 221, 0.25), transparent 50%),
+    linear-gradient(135deg, #ffffff, #f7f2f8, #eef3ff);
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at center, rgba(255,105,180,0.06), transparent 60%);
+  animation:glow 6s ease-in-out infinite;
+  pointer-events:none;
+}
+
+@keyframes glow{
+  0%,100%{opacity:0.4;}
+  50%{opacity:0.8;}
+}
+
+/* 🌹 PETALS */
+#petals{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:0;
+}
+
+.petal{
+  position:absolute;
+  top:-10px;
+  width:14px;
+  height:14px;
+  border-radius:60% 40% 60% 40%;
+  opacity:0.85;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  0%{transform:translateY(-10vh) rotate(0deg); opacity:0;}
+  10%{opacity:1;}
+  100%{transform:translateY(110vh) rotate(360deg); opacity:0;}
+}
+
+/* LOGIN */
+#login{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(4px);
+  z-index:2;
+}
+
+input{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #c9b79c;
+}
+
+button{
+  margin-top:10px;
+  padding:12px 18px;
+  background:#e8d7ea;
+  border:1px solid #c9b79c;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* GAME */
+#game{
+  display:none;
+  position:relative;
+  z-index:2;
+  padding-top:40px;
+}
+
+/* 🎰 SLOT MACHINE */
+.slot-machine{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:20px;
+}
+
+.reel{
+  width:120px;
+  height:120px;
+  overflow:hidden;
+  border-radius:14px;
+
+  border:2px solid #ff4dff;
+  box-shadow:
+    0 0 10px #ff4dff,
+    0 0 20px #00ffff,
+    inset 0 0 10px rgba(255,255,255,0.3);
+
+  background:rgba(255,255,255,0.85);
+  position:relative;
+}
+
+.strip{
+  position:absolute;
+  width:100%;
+}
+
+.item{
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+
+/* POPUP */
+#popup{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(4px);
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+#popupBox{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:85%;
+  max-width:350px;
+  text-align:left;
+}
+
+.reel-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+
+.label{
+  font-size:14px;
+  font-weight:bold;
+  letter-spacing:2px;
+
+  color:#ff4dff;
+
+  text-shadow:
+    0 0 5px #ff4dff,
+    0 0 10px #ff4dff,
+    0 0 20px #00ffff,
+    0 0 30px #ff4dff;
+
+  animation: neonFlicker 2.2s infinite alternate;
+  padding:4px 10px;
+  border-radius:6px;
+
+  background:rgba(255,255,255,0.35);
+  backdrop-filter:blur(3px);
+}
+
+/* ✨ flicker animation */
+@keyframes neonFlicker{
+  0%{
+    opacity:1;
+    text-shadow:
+      0 0 5px #ff4dff,
+      0 0 10px #00ffff,
+      0 0 20px #ff4dff;
+  }
+
+  50%{
+    opacity:0.85;
+    text-shadow:
+      0 0 3px #ff4dff,
+      0 0 8px #00ffff;
+  }
+
+  100%{
+    opacity:1;
+    text-shadow:
+      0 0 8px #ff4dff,
+      0 0 18px #00ffff,
+      0 0 30px #ff4dff;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="petals"></div>
+
+<!-- LOGIN -->
+<div id="login">
+  <h2>Enter Your Name</h2>
+  <input id="nameInput">
+  <button onclick="start()">Start</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+
+  <h2>📖 Book Fate Machine</h2>
+
+  <div class="slot-machine">
+
+  <div class="reel-box">
+    <div class="label">📖 Genre</div>
+    <div class="reel" id="reel1"></div>
+  </div>
+
+  <div class="reel-box">
+    <div class="label">📄 Page Count</div>
+    <div class="reel" id="reel2"></div>
+  </div>
+
+  <div class="reel-box">
+    <div class="label">🎁 Bonus</div>
+    <div class="reel" id="reel3"></div>
+  </div>
+
+</div>
+
+  <button onclick="spin()">Spin</button>
+
+  <div id="result"></div>
+  <button id="shareBtn" onclick="showShare()" style="display:none;">Share Result</button>
+</div>
+
+<!-- POPUP -->
+<div id="popup">
+  <div id="popupBox">
+    <h2>📖 Your Fate</h2>
+    <div id="popupContent"></div>
+    <button onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<script>
+
+let name="";
+let lastResult={};
+
+const todayKey="bookFateDate";
+const spinKey="bookFateSpins";
+
+const genres=["Fantasy","Romance","Thriller","Mystery","Sci-Fi","Horror"];
+const pages=["100+ pages","200+ pages","300+ pages","400+ pages","500+ pages"];
+const bonus=["Bookmark reward","Extra chapter","Reading streak","Bonus story"];
+
+function getToday(){
+  return new Date().toISOString().split("T")[0];
+}
+
+function checkReset(){
+  const saved=localStorage.getItem(todayKey);
+  const today=getToday();
+
+  if(saved!==today){
+    localStorage.setItem(todayKey,today);
+    localStorage.setItem(spinKey,"0");
+  }
+}
+
+function start(){
+  name=document.getElementById("nameInput").value;
+  if(!name) return alert("Enter name");
+
+  checkReset();
+
+  document.getElementById("login").style.display="none";
+  document.getElementById("game").style.display="block";
+}
+
+/* 🎰 SPIN */
+function spin(){
+
+  checkReset();
+
+  let spins=parseInt(localStorage.getItem(spinKey)||"0");
+
+  if(spins>=3){
+    alert("3 spins used today. Come back tomorrow 📖");
+    return;
+  }
+
+  spins++;
+  localStorage.setItem(spinKey,spins);
+
+  const reels=[
+    document.getElementById("reel1"),
+    document.getElementById("reel2"),
+    document.getElementById("reel3")
+  ];
+
+  const pools=[genres,pages,bonus];
+  let results=[];
+
+  reels.forEach((reel,i)=>{
+
+    const strip=document.createElement("div");
+    strip.className="strip";
+
+    for(let j=0;j<20;j++){
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerText=pools[i][Math.floor(Math.random()*pools[i].length)];
+      strip.appendChild(div);
+    }
+
+    reel.innerHTML="";
+    reel.appendChild(strip);
+
+    let pos=0;
+    let speed=25+i*5;
+
+    const interval=setInterval(()=>{
+      pos+=speed;
+      strip.style.top=-(pos%2400)+"px";
+    },30);
+
+    setTimeout(()=>{
+
+      clearInterval(interval);
+
+      const final=pools[i][Math.floor(Math.random()*pools[i].length)];
+      results[i]=final;
+
+      strip.style.top="0px";
+      strip.innerHTML=`<div class="item">${final}</div>`;
+
+      if(results.length===3 && results.every(Boolean)){
+        finish(spins,results);
+      }
+
+    },1200+i*900);
+  });
+}
+
+/* FINISH */
+function finish(spins,results){
+
+  lastResult={
+    name,
+    genre:results[0],
+    pages:results[1],
+    bonus:results[2],
+    date:new Date().toLocaleString(),
+    spinLabel:`${spins}/3`
+  };
+
+  document.getElementById("result").innerText=
+    "Spin complete. Reveal your fate.";
+
+  document.getElementById("shareBtn").style.display="inline-block";
+}
+
+/* SHARE */
+function showShare(){
+
+  document.getElementById("popup").style.display="flex";
+
+  document.getElementById("popupContent").innerHTML=`
+    <p><strong>Name:</strong> ${lastResult.name}</p>
+    <p><strong>Date:</strong> ${lastResult.date}</p>
+    <p><strong>Spin:</strong> ${lastResult.spinLabel}</p>
+    <hr>
+    <p><strong>Genre:</strong> ${lastResult.genre}</p>
+    <p><strong>Pages:</strong> ${lastResult.pages}</p>
+    <p><strong>Bonus:</strong> ${lastResult.bonus}</p>
+  `;
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+}
+
+/* 🌹 PETALS */
+function createPetal(){
+  const petal=document.createElement("div");
+  petal.className="petal";
+
+  const colors=[
+    ["#ff6b9d","#ffb6c1"],
+    ["#ff8fab","#ffd6e0"],
+    ["#c084fc","#f5d0fe"],
+    ["#60a5fa","#e0f2fe"],
+    ["#fda4af","#fff1f2"]
+  ];
+
+  const c=colors[Math.floor(Math.random()*colors.length)];
+
+  petal.style.background=`radial-gradient(circle, ${c[0]}, ${c[1]})`;
+  petal.style.left=Math.random()*100+"vw";
+  petal.style.animationDuration=(4+Math.random()*5)+"s";
+
+  document.getElementById("petals").appendChild(petal);
+
+  setTimeout(()=>petal.remove(),10000);
+}
+
+setInterval(createPetal,200);
+
+</script>
+
+</body>
+</html>
