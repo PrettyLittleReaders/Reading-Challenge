@@ -269,6 +269,32 @@ button{
   }
 }
 
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(6px);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.modalBox{
+  background:rgba(255,255,255,0.8);
+  border:2px solid #ff4dff;
+  border-radius:14px;
+  padding:20px;
+  width:85%;
+  max-width:320px;
+
+  box-shadow:
+    0 0 10px #ff4dff,
+    0 0 20px #00ffff;
+
+  text-align:center;
+}
+
 </style>
 </head>
 
@@ -310,7 +336,7 @@ button{
   <button onclick="spin()">Spin</button>
 
   <div id="result"></div>
-  <button id="shareBtn" class="share-btn" onclick="showShare()" style="display:none;">
+  <button id="shareBtn" class="share-btn" onclick="openShareMenu()" style="display:none;">
   Share Result
 </button>
 </div>
@@ -321,6 +347,17 @@ button{
     <h2>📖 Your Fate</h2>
     <div id="popupContent"></div>
     <button onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<!-- SHARE MENU POPUP -->
+<div id="shareMenu" class="modal">
+  <div class="modalBox">
+    <h2>📖 Share Your Fate</h2>
+    <p>Ready to reveal your results?</p>
+
+    <button onclick="closeShareMenu(); showShare();">View Results</button>
+    <button onclick="closeShareMenu()">Close</button>
   </div>
 </div>
 
@@ -393,6 +430,14 @@ const bonus=[
 
 function getToday(){
   return new Date().toISOString().split("T")[0];
+}
+
+function openShareMenu(){
+  document.getElementById("shareMenu").style.display="flex";
+}
+
+function closeShareMenu(){
+  document.getElementById("shareMenu").style.display="none";
 }
 
 function checkReset(){
