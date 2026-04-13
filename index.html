@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Fate Machine</title>
+<title>Pretty Little Spins</title>
 
 <style>
 body{
@@ -252,18 +252,18 @@ button{
 <div id="login">
   <h2>Enter Your Name</h2>
   <input id="nameInput">
-  <button onclick="start()">Start</button>
+  <button onclick="start()">Let's Get Lucky</button>
 </div>
 
 <!-- GAME -->
 <div id="game">
 
-  <h2>📖 Book Fate Machine</h2>
+  <h2>📖 Pretty Little Spins 📖</h2>
 
   <div class="slot-machine">
 
   <div class="reel-box">
-    <div class="label">📖 Genre</div>
+    <div class="label">📖 Genre/Trope</div>
     <div class="reel" id="reel1"></div>
   </div>
 
@@ -302,9 +302,64 @@ let lastResult={};
 const spinKey = "bookFateSpins";
 const timeKey = "bookFateStartTime";
 
-const genres=["Fantasy","Romance","Thriller","Mystery","Sci-Fi","Horror"];
-const pages=["100+ pages","200+ pages","300+ pages","400+ pages","500+ pages"];
-const bonus=["Bookmark reward","Extra chapter","Reading streak","Bonus story"];
+const genres = [
+  "Fantasy",
+  "Enemies to Lovers",
+  "Slow Burn",
+  "Dark Romance",
+  "Romance",
+  "Thriller",
+  "Mystery",
+  "Friends to Lovers",
+  "Dystopian",
+  "Second Chance Romance",
+  "Crime",
+  "Young Adult",
+  "Cozy Mystery",
+  "Contemporary Romance",
+  "New Adult",
+  "Rom-Com",
+  "Historical Romance",
+  "Adventure",
+  "Paranormal",
+  "Sci-Fi",
+  "Horror"
+];
+const pages = [
+  "100+ pages",
+  "150 minimal pages",
+  "200 minimal pages",
+  "150 minimal pages",
+  "150 minimal pages",
+  "150 minimal pages",
+  "200 minimal pages",
+  "250 minimal pages",
+  "200 minimal pages",
+  "250 minimal pages",
+  "200 minimal pages",
+  "250 minimal pages",
+  "250 minimal pages",
+  "300 minimal pages"
+];
+const bonus=[
+  "Double Points",
+  "10 Tokens",
+  "Double Points",
+  "Double Points",
+  "10 Tokens",
+  "Double Points",
+  "15 Tokens",
+  "Double Points",
+  "10 Tokens",
+  "Double Points",
+  "10 Tokens",
+  "Double Points",
+  "15 tokens",
+  "Double Points",
+  "10 Tokens",
+  "Double Points",
+  "Triple Points"
+];
 
 function getToday(){
   return new Date().toISOString().split("T")[0];
